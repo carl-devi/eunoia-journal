@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Eunoia</title>
+    <style>
+      @import url("[https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap](https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap)");
+
+      :root {
+        --paper: #fbf6ec;
+        --paper-raised: #fffdf8;
+        --ink: #2b2420;
+        --ink-soft: #5c5147;
+        --ink-faint: #8a7e70;
+        --accent: #4b3f72;
+        --accent-hover: #3a3059;
+        --accent-soft: #ece8f5;
+        --on-accent: #ffffff;
+        --border: #e8ddc9;
+        --shadow: 0 24px 60px -32px rgba(43, 36, 32, 0.45);
+        --insight: #d29b52;
+        --insight-bg: #fdf7ef;
+        color-scheme: light;
+      }
+
+      html[data-theme="dark"] {
+        --paper: #1e1b18;
+        --paper-raised: #262220;
+        --ink: #ede6da;
+        --ink-soft: #b7ac9c;
+        --ink-faint: #8a7e70;
+        --accent: #a99bde;
+        --accent-hover: #bcb0e6;
+        --accent-soft: #34304a;
+        --on-accent: #221d33;
+        --border: #3a342d;
+        --shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.6);
+        --insight: #e3b270;
+        --insight-bg: #2c261f;
+        color-scheme: dark;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      body,
+      .sidebar,
+      .composer-page,
+      .auth-card,
+      input,
+      textarea,
+      button,
+      .entry-item-btn,
+      .pattern-card {
+        font-family: "Libre Baskerville", Georgia, serif;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background-color 0.4s ease,
+          color 0.4s ease,
+          border-color 0.4s ease,
+          box-shadow 0.4s ease;
+      }
+
+      h1,
+      h2,
+      h3,
+      .display {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      button,
+      input,
+      textarea {
+        font-family: inherit;
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      /* Layout */
+      .app-shell {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .sidebar {
+        width: 320px;
+        flex-shrink: 0;
+        background: var(--paper);
+        border-right: 1px solid var(--border);
+        padding: 28px 22px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow-y: hidden;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .wordmark {
+        font-size: 1.6rem;
+        letter-spacing: 0.01em;
+      }
+      .wordmark .dot {
+        color: var(--accent);
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: transparent;
+        cursor: pointer;
+      }
+      .icon-btn:hover {
+        border-color: var(--accent);
+      }
+      .icon-btn svg {
+        width: 17px;
+        height: 17px;
+        stroke: var(--ink-soft);
+        transition: stroke 0.3s ease;
+      }
+      .icon-btn:hover svg {
+        stroke: var(--accent);
+      }
+
+      .btn {
+        font-size: 0.92rem;
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: var(--on-accent);
+        border-color: var(--accent);
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+      }
+      .btn-ghost {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--ink-soft);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-block {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      /* Search & Filter Elements */
+      .search-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: var(--paper-raised);
+        margin-bottom: 12px;
+      }
+      .search-input-wrap svg {
+        width: 15px;
+        height: 15px;
+        stroke: var(--ink-faint);
+        flex-shrink: 0;
+      }
+      .search-input-wrap input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 0.9rem;
+        color: var(--ink);
+      }
+      .search-input-wrap input::placeholder {
+        color: var(--ink-faint);
+      }
+
+      .mood-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .chip,
+      .mood-btn {
+        font-family: "Libre Baskerville", serif;
+        font-size: 0.78rem;
+        padding: 5px 11px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--ink-soft);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+      }
+      .chip .dot,
+      .mood-btn .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .chip[aria-pressed="true"],
+      .mood-btn[aria-pressed="true"] {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .mood-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .mood-btn {
+        font-size: 0.85rem;
+        padding: 7px 13px;
+      }
+      .mood-btn .dot {
+        width: 9px;
+        height: 9px;
+      }
+
+      .entries-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--border);
+      }
+      .entry-item-btn {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 10px;
+        cursor: pointer;
+        display: block;
+      }
+      .entry-item-btn:hover {
+        background: var(--accent-soft);
+      }
+      .entry-item-date {
+        font-size: 0.72rem;
+        color: var(--accent);
+        margin-bottom: 4px;
+        display: block;
+        font-weight: bold;
+      }
+      .entry-item-title {
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .entry-item-mood {
+        margin-top: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+      }
+
+      /* Main Content */
+      .composer-wrap {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        padding: 44px 24px 90px;
+        overflow-y: auto;
+        height: 100vh;
+      }
+      .composer-page {
+        width: 100%;
+        max-width: 680px;
+        background: var(--paper-raised);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 44px 52px 40px;
+        height: fit-content;
+      }
+
+      .composer-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+      }
+      .entry-date {
+        font-size: 0.88rem;
+        color: var(--ink-faint);
+        margin: 0;
+      }
+
+      /* "Something I Noticed" Banner */
+      .ambient-insight {
+        background: var(--insight-bg);
+        border-left: 3px solid var(--insight);
+        padding: 16px 20px;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .ambient-insight-header {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 600;
+        color: var(--insight);
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ambient-insight-text {
+        font-size: 0.9rem;
+        color: var(--ink);
+        line-height: 1.5;
+      }
+
+      textarea#prompt {
+        font-family: "Libre Baskerville", Georgia, serif;
+        font-size: 1.05rem;
+        line-height: 1.85;
+        width: 100%;
+        min-height: 200px;
+        border: none;
+        background: transparent;
+        resize: vertical;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+      textarea#prompt::placeholder {
+        color: var(--ink-faint);
+      }
+
+      .ai-reflection-box {
+        background: var(--accent-soft);
+        border-radius: 10px;
+        padding: 24px;
+        margin-top: 30px;
+        border: 1px solid var(--border);
+      }
+      .ai-reflection-box h3 {
+        font-size: 1.1rem;
+        color: var(--accent);
+        margin-bottom: 12px;
+      }
+      .ai-reflection-box p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--ink);
+      }
+
+      /* Life Pattern Radar View */
+      .radar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .pattern-card {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      }
+      .pattern-type {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--insight);
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .pattern-title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.4rem;
+        color: var(--ink);
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+      .pattern-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        margin-bottom: 16px;
+      }
+      .pattern-evidence {
+        background: var(--paper-raised);
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--ink-faint);
+        border: 1px solid var(--border);
+        margin-bottom: 16px;
+      }
+      .pattern-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border);
+        padding-top: 16px;
+        font-size: 0.8rem;
+        color: var(--ink-faint);
+      }
+      .delete-pattern-btn {
+        color: #d98a7c;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        font-family: inherit;
+        font-size: 0.8rem;
+      }
+
+      /* Auth Overlay */
+      #auth-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--paper);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .auth-card {
+        background: var(--paper-raised);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: var(--shadow);
+      }
+      .auth-card h2 {
+        font-size: 2rem;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .auth-input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: 0.95rem;
+      }
+      .auth-input::placeholder {
+        color: var(--ink-faint);
+      }
+      .auth-input:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Authentication Screen -->
+    <div id="auth-overlay">
+      <div class="auth-card">
+        <h2>Welcome to Eunoia</h2>
+        <input
+          type="email"
+          id="email"
+          class="auth-input"
+          placeholder="Email Address"
+        />
+        <input
+          type="password"
+          id="password"
+          class="auth-input"
+          placeholder="Password"
+        />
+        <button
+          onclick="logIn()"
+          class="btn btn-primary btn-block"
+          style="margin-bottom: 12px"
+        >
+          Log In
+        </button>
+        <button onclick="signUp()" class="btn btn-ghost btn-block">
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-shell hidden" id="app-shell">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1 class="wordmark">Eunoia<span class="dot">.</span></h1>
+          <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+            <svg
+              id="theme-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></svg>
+          </button>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="showEditor()">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            width="15"
+            height="15"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New entry
+        </button>
+
+        <button class="btn btn-ghost btn-block" onclick="showRadar()">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            width="15"
+            height="15"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a10 10 0 0 1 10 10" />
+          </svg>
+          Life Pattern Radar
+        </button>
+
+        <div>
+          <div class="search-input-wrap" style="margin-top: 10px">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="search"
+              id="search-input"
+              placeholder="Search your entries…"
+            />
+          </div>
+          <div class="mood-filters" id="sidebar-moods"></div>
+        </div>
+
+        <ul class="entries-list" id="history-list"></ul>
+
+        <button
+          onclick="logOut()"
+          class="btn btn-ghost"
+          style="margin-top: auto; padding: 8px; font-size: 0.8rem"
+        >
+          Log Out
+        </button>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="composer-wrap">
+        <!-- Editor View -->
+        <div class="composer-page hidden" id="editor-view">
+          <div class="composer-top">
+            <p class="entry-date">Today</p>
+          </div>
+
+          <div id="ambient-insight-container" class="ambient-insight hidden">
+            <div class="ambient-insight-header">✨ Something I Noticed</div>
+            <div id="ambient-insight-text" class="ambient-insight-text"></div>
+          </div>
+
+          <div class="mood-picker" id="composer-moods"></div>
+
+          <textarea
+            id="prompt"
+            placeholder="What is happening right now?"
+          ></textarea>
+          <button onclick="sendEntry()" id="submit-btn" class="btn btn-primary">
+            Save & Reflect
+          </button>
+
+          <div id="result" class="ai-reflection-box hidden">
+            <h3>Gemini Reflection</h3>
+            <p id="result-text"></p>
+          </div>
+        </div>
+
+        <!-- Reader View -->
+        <div class="composer-page hidden" id="reader-view">
+          <div class="composer-top">
+            <p class="entry-date" id="read-date"></p>
+            <div class="chip" id="read-mood" style="cursor: default"></div>
+          </div>
+          <p
+            id="read-prompt"
+            style="
+              line-height: 1.85;
+              margin-bottom: 40px;
+              white-space: pre-wrap;
+            "
+          ></p>
+
+          <div class="ai-reflection-box">
+            <h3>Gemini Reflection</h3>
+            <p id="read-summary"></p>
+          </div>
+        </div>
+
+        <!-- Life Pattern Radar View -->
+        <div class="composer-page hidden" id="radar-view">
+          <div class="radar-header">
+            <h1 class="display">Life Pattern Radar</h1>
+            <button
+              onclick="generatePatterns()"
+              id="generate-radar-btn"
+              class="btn btn-primary"
+            >
+              Analyze Recent Entries
+            </button>
+          </div>
+
+          <p
+            style="
+              color: var(--ink-soft);
+              font-size: 0.95rem;
+              margin-bottom: 30px;
+              line-height: 1.6;
+            "
+          >
+            Your AI assistant periodically reviews your journal to proactively
+            identify meaningful trends, shifts in mood, and recurring habits.
+            <em
+              >These are AI-generated observations, not professional
+              diagnoses.</em
+            >
+          </p>
+
+          <div id="patterns-container">
+            <!-- Pattern cards populated here -->
+            <p
+              style="color: var(--ink-faint); text-align: center; padding: 40px"
+            >
+              No patterns analyzed yet. Write a few entries and click Analyze!
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+        getIdToken,
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+      // REPLACE WITH YOUR FIREBASE CONFIG
+      const firebaseConfig = {
+        apiKey: "AIzaSyCBTN03SfpMDKLADYR-W2hncf2fZScBE4A",
+        authDomain: "gemini-journal-14b2a.firebaseapp.com",
+        projectId: "gemini-journal-14b2a",
+        storageBucket: "gemini-journal-14b2a.firebasestorage.app",
+        messagingSenderId: "379219540714",
+        appId: "1:379219540714:web:a09fde3204eb9ea80e7593",
+        measurementId: "G-1TG4V3E0QE",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      let userToken = "";
+      let allEntries = [];
+      let allPatterns = [];
+      let currentSearch = "";
+      let currentMoodFilter = "all";
+      let selectedComposerMood = null;
+
+      const MOODS = [
+        { id: "calm", label: "Calm", color: "#7C93A6" },
+        { id: "bright", label: "Bright", color: "#C0724F" },
+        { id: "grateful", label: "Grateful", color: "#7C9473" },
+        { id: "restless", label: "Restless", color: "#C08A3E" },
+        { id: "heavy", label: "Heavy", color: "#7C6F8C" },
+      ];
+
+      function getMoodById(id) {
+        return MOODS.find((m) => m.id === id);
+      }
+
+      // Theme Management
+      const themeToggle = document.getElementById("theme-toggle");
+      const themeIcon = document.getElementById("theme-icon");
+
+      function updateThemeIcon(theme) {
+        if (theme === "dark") {
+          themeIcon.innerHTML =
+            '<circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/>';
+        } else {
+          themeIcon.innerHTML =
+            '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>';
+        }
+      }
+
+      function initTheme() {
+        const storedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const initialTheme = storedTheme
+          ? storedTheme
+          : prefersDark
+            ? "dark"
+            : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+        updateThemeIcon(initialTheme);
+      }
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+      });
+      initTheme();
+
+      // UI Initialization
+      function renderMoodFilters() {
+        const sidebarWrap = document.getElementById("sidebar-moods");
+        let sidebarHtml = `<button class="chip" data-mood="all" aria-pressed="${currentMoodFilter === "all"}">All</button>`;
+        const composerWrap = document.getElementById("composer-moods");
+        let composerHtml = "";
+
+        MOODS.forEach((m) => {
+          sidebarHtml += `<button class="chip" data-mood="${m.id}" aria-pressed="${currentMoodFilter === m.id}"><span class="dot" style="background:${m.color}"></span>${m.label}</button>`;
+          composerHtml += `<button class="mood-btn" data-mood="${m.id}" aria-pressed="${selectedComposerMood === m.id}"><span class="dot" style="background:${m.color}"></span>${m.label}</button>`;
+        });
+
+        sidebarWrap.innerHTML = sidebarHtml;
+        composerWrap.innerHTML = composerHtml;
+
+        sidebarWrap.querySelectorAll(".chip").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            currentMoodFilter = e.currentTarget.getAttribute("data-mood");
+            renderMoodFilters();
+            renderHistoryList();
+          });
+        });
+
+        composerWrap.querySelectorAll(".mood-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const clickedMood = e.currentTarget.getAttribute("data-mood");
+            selectedComposerMood =
+              selectedComposerMood === clickedMood ? null : clickedMood;
+            renderMoodFilters();
+          });
+        });
+      }
+
+      document.getElementById("search-input").addEventListener("input", (e) => {
+        currentSearch = e.target.value.toLowerCase();
+        renderHistoryList();
+      });
+
+      // Authentication
+      window.signUp = () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        createUserWithEmailAndPassword(auth, email, pass).catch((e) =>
+          alert(e.message),
+        );
+      };
+
+      window.logIn = () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        signInWithEmailAndPassword(auth, email, pass).catch((e) =>
+          alert(e.message),
+        );
+      };
+      window.logOut = () => signOut(auth);
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          document.getElementById("auth-overlay").classList.add("hidden");
+          document.getElementById("app-shell").classList.remove("hidden");
+          userToken = await getIdToken(user);
+          renderMoodFilters();
+          fetchHistory();
+          fetchPatterns();
+          showEditor();
+        } else {
+          document.getElementById("auth-overlay").classList.remove("hidden");
+          document.getElementById("app-shell").classList.add("hidden");
+          userToken = "";
+        }
+      });
+
+      // View Management
+      window.showEditor = () => {
+        document.getElementById("editor-view").classList.remove("hidden");
+        document.getElementById("reader-view").classList.add("hidden");
+        document.getElementById("radar-view").classList.add("hidden");
+        document.getElementById("prompt").value = "";
+        document.getElementById("result").classList.add("hidden");
+        document.getElementById("submit-btn").innerText = "Save & Reflect";
+        document.getElementById("submit-btn").disabled = false;
+        selectedComposerMood = null;
+        renderMoodFilters();
+        updateAmbientInsight();
+      };
+
+      window.viewEntry = (item) => {
+        document.getElementById("editor-view").classList.add("hidden");
+        document.getElementById("radar-view").classList.add("hidden");
+        document.getElementById("reader-view").classList.remove("hidden");
+        document.getElementById("read-date").innerText = item.date;
+        document.getElementById("read-prompt").innerText = item.prompt;
+        document.getElementById("read-summary").innerText = item.summary;
+
+        const moodElement = document.getElementById("read-mood");
+        const moodData = getMoodById(item.mood);
+        if (moodData) {
+          moodElement.classList.remove("hidden");
+          moodElement.innerHTML = `<span class="dot" style="background:${moodData.color}"></span>${moodData.label}`;
+        } else {
+          moodElement.classList.add("hidden");
+        }
+      };
+
+      window.showRadar = () => {
+        document.getElementById("editor-view").classList.add("hidden");
+        document.getElementById("reader-view").classList.add("hidden");
+        document.getElementById("radar-view").classList.remove("hidden");
+        renderPatterns();
+      };
+
+      // Data Fetching & Rendering
+      async function fetchHistory() {
+        try {
+          const response = await fetch("/api/journal/history", {
+            headers: { Authorization: "Bearer " + userToken },
+          });
+          const data = await response.json();
+          allEntries = data.history || [];
+          renderHistoryList();
+        } catch (error) {
+          console.error("Error fetching history");
+        }
+      }
+
+      function renderHistoryList() {
+        const historyBox = document.getElementById("history-list");
+        historyBox.innerHTML = "";
+        const filteredEntries = allEntries.filter((item) => {
+          const matchesMood =
+            currentMoodFilter === "all" || item.mood === currentMoodFilter;
+          const matchesSearch =
+            item.prompt.toLowerCase().includes(currentSearch) ||
+            item.summary.toLowerCase().includes(currentSearch);
+          return matchesMood && matchesSearch;
+        });
+
+        if (filteredEntries.length > 0) {
+          filteredEntries.forEach((item) => {
+            const li = document.createElement("li");
+            const moodData = getMoodById(item.mood);
+            const moodHtml = moodData
+              ? `<span class="entry-item-mood"><span class="dot" style="width: 6px; height: 6px; background:${moodData.color}; border-radius: 50%;"></span>${moodData.label}</span>`
+              : "";
+            li.innerHTML = `
+            <button class="entry-item-btn">
+              <span class="entry-item-date">${item.date}</span>
+              <span class="entry-item-title">${item.prompt}</span>
+              ${moodHtml}
+            </button>
+          `;
+            li.querySelector("button").onclick = () => viewEntry(item);
+            historyBox.appendChild(li);
+          });
+        } else {
+          historyBox.innerHTML =
+            '<li style="padding: 14px 10px; color: var(--ink-faint); font-size: 0.85rem;">No entries found.</li>';
+        }
+      }
+
+      // Pattern Logic
+      async function fetchPatterns() {
+        try {
+          const response = await fetch("/api/journal/patterns", {
+            headers: { Authorization: "Bearer " + userToken },
+          });
+          const data = await response.json();
+          allPatterns = data.patterns || [];
+          updateAmbientInsight();
+        } catch (error) {
+          console.error("Error fetching patterns");
+        }
+      }
+
+      function updateAmbientInsight() {
+        const container = document.getElementById("ambient-insight-container");
+        const text = document.getElementById("ambient-insight-text");
+        if (allPatterns.length > 0) {
+          // Randomly pick one pattern for the ambient banner
+          const randomPattern =
+            allPatterns[Math.floor(Math.random() * allPatterns.length)];
+          text.innerText = randomPattern.description;
+          container.classList.remove("hidden");
+        } else {
+          container.classList.add("hidden");
+        }
+      }
+
+      window.generatePatterns = async () => {
+        const btn = document.getElementById("generate-radar-btn");
+        const container = document.getElementById("patterns-container");
+        btn.innerText = "Analyzing...";
+        btn.disabled = true;
+
+        try {
+          const response = await fetch("/api/journal/patterns/generate", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + userToken },
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            alert(data.error);
+          } else if (data.patterns) {
+            // Prepend new patterns
+            allPatterns = [...data.patterns, ...allPatterns];
+            renderPatterns();
+          }
+        } catch (error) {
+          alert("Error analyzing patterns.");
+        }
+        btn.innerText = "Analyze Recent Entries";
+        btn.disabled = false;
+      };
+
+      function renderPatterns() {
+        const container = document.getElementById("patterns-container");
+        if (allPatterns.length === 0) {
+          container.innerHTML =
+            '<p style="color: var(--ink-faint); text-align: center; padding: 40px;">No patterns analyzed yet. Write a few entries and click Analyze!</p>';
+          return;
+        }
+
+        container.innerHTML = allPatterns
+          .map((p) => {
+            const datesString =
+              p.relatedDates && p.relatedDates.length > 0
+                ? `Observed across entries from: ${p.relatedDates.join(", ")}`
+                : "Ongoing observation";
+            return `
+          <div class="pattern-card">
+            <span class="pattern-type">🔎 ${p.type}</span>
+            <div class="pattern-title">${p.title}</div>
+            <div class="pattern-desc">${p.description}</div>
+            <div class="pattern-evidence"><strong>Evidence:</strong> ${p.evidence}</div>
+            <div class="pattern-footer">
+              <span>${datesString}</span>
+              <button class="delete-pattern-btn" onclick="deletePattern('${p.id}')">Dismiss Insight</button>
+            </div>
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      window.deletePattern = async (id) => {
+        try {
+          await fetch(`/api/journal/patterns/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + userToken },
+          });
+          allPatterns = allPatterns.filter((p) => p.id !== id);
+          renderPatterns();
+          updateAmbientInsight();
+        } catch (error) {
+          alert("Failed to delete pattern.");
+        }
+      };
+
+      // Submission Logic
+      window.sendEntry = async () => {
+        const promptText = document.getElementById("prompt").value;
+        const resultBox = document.getElementById("result");
+        const resultText = document.getElementById("result-text");
+        const submitBtn = document.getElementById("submit-btn");
+
+        if (!promptText.trim()) return;
+
+        resultBox.classList.remove("hidden");
+        resultText.innerText = "Reflecting...";
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Processing...";
+
+        try {
+          const response = await fetch("/api/journal", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + userToken,
+            },
+            body: JSON.stringify({
+              prompt: promptText,
+              mood: selectedComposerMood,
+            }),
+          });
+          const data = await response.json();
+          if (data.summary) {
+            resultText.innerText = data.summary;
+            submitBtn.innerText = "Saved";
+            fetchHistory();
+          } else {
+            resultText.innerText = "Error: " + data.error;
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Try Again";
+          }
+        } catch (error) {
+          resultText.innerText = "Error connecting to server.";
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Try Again";
+        }
+      };
+    </script>
+  </body>
+</html>
