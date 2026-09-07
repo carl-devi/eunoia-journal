@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Sign Up - Eunoia</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+      :root {
+        --paper: #fbf6ec;
+        --paper-raised: #fffdf8;
+        --ink: #2b2420;
+        --ink-faint: #8a7e70;
+        --accent: #4b3f72;
+        --accent-hover: #3a3059;
+        --border: #e8ddc9;
+        --shadow: 0 24px 60px -32px rgba(43, 36, 32, 0.45);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Libre Baskerville", Georgia, serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .auth-card {
+        background: var(--paper-raised);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 2rem;
+        margin: 0 0 8px 0;
+      }
+      p {
+        color: var(--ink-faint);
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+
+      .auth-input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        color: inherit;
+        box-sizing: border-box;
+      }
+      .auth-input:focus {
+        outline: 2px solid var(--accent);
+        border-color: transparent;
+      }
+
+      .btn {
+        width: 100%;
+        font-size: 0.92rem;
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+        display: block;
+        box-sizing: border-box;
+        text-decoration: none;
+        margin-bottom: 12px;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+      .btn-ghost {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--ink);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+      }
+
+      #error-msg {
+        color: #d98a7c;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-card">
+      <h2>Create Account</h2>
+      <p>Join Eunoia and start reflecting.</p>
+
+      <div id="error-msg"></div>
+
+      <input
+        type="email"
+        id="email"
+        class="auth-input"
+        placeholder="Email Address"
+      />
+      <input
+        type="password"
+        id="password"
+        class="auth-input"
+        placeholder="Password (min 6 characters)"
+      />
+
+      <button onclick="registerUser()" class="btn btn-primary" id="signup-btn">
+        Sign Up
+      </button>
+      <a href="/" class="btn btn-ghost">Back to Login</a>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+      // PASTE YOUR FIREBASE CONFIG HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSyCBTN03SfpMDKLADYR-W2hncf2fZScBE4A",
+        authDomain: "gemini-journal-14b2a.firebaseapp.com",
+        projectId: "gemini-journal-14b2a",
+        storageBucket: "gemini-journal-14b2a.firebasestorage.app",
+        messagingSenderId: "379219540714",
+        appId: "1:379219540714:web:a09fde3204eb9ea80e7593",
+        measurementId: "G-1TG4V3E0QE",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      window.registerUser = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        const errorMsg = document.getElementById("error-msg");
+        const btn = document.getElementById("signup-btn");
+
+        if (!email || !pass) {
+          errorMsg.innerText = "Please fill in all fields.";
+          errorMsg.style.display = "block";
+          return;
+        }
+
+        btn.innerText = "Creating account...";
+        btn.disabled = true;
+
+        try {
+          await createUserWithEmailAndPassword(auth, email, pass);
+          // On success, redirect to the main journal page
+          window.location.href = "/";
+        } catch (error) {
+          errorMsg.innerText = error.message;
+          errorMsg.style.display = "block";
+          btn.innerText = "Sign Up";
+          btn.disabled = false;
+        }
+      };
+    </script>
+  </body>
+</html>

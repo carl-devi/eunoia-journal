@@ -12,7 +12,8 @@ if os.path.exists('serviceAccountKey.json'):
     cred = credentials.Certificate('serviceAccountKey.json')
     firebase_admin.initialize_app(cred)
 else:
-    firebase_admin.initialize_app()
+    # Explicitly tell Cloud Run which project to use for token verification
+    firebase_admin.initialize_app(options={'projectId': 'gemini-journal-14b2a'})
     
 db = firestore.client()
 
@@ -36,6 +37,10 @@ def verify_token(req):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
 
 @app.route('/api/journal', methods=['POST'])
 def journal_entry():

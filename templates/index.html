@@ -2,11 +2,14 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta name="color-scheme" content="light dark" />
     <title>Eunoia</title>
     <style>
-      @import url("[https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap](https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap)");
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
 
       :root {
         --paper: #fbf6ec;
@@ -83,7 +86,6 @@
         font-weight: 600;
         margin: 0;
       }
-
       button,
       input,
       textarea {
@@ -236,7 +238,6 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        transition: all 0.2s ease;
       }
       .chip .dot,
       .mood-btn .dot {
@@ -404,6 +405,7 @@
         font-size: 0.95rem;
         line-height: 1.7;
         color: var(--ink);
+        margin: 0;
       }
 
       /* Life Pattern Radar View */
@@ -469,6 +471,7 @@
         text-decoration: underline;
         font-family: inherit;
         font-size: 0.8rem;
+        padding: 0;
       }
 
       /* Auth Overlay */
@@ -503,6 +506,7 @@
         padding: 12px 16px;
         margin-bottom: 16px;
         font-size: 0.95rem;
+        box-sizing: border-box;
       }
       .auth-input::placeholder {
         color: var(--ink-faint);
@@ -514,13 +518,79 @@
       .hidden {
         display: none !important;
       }
+
+      /* --- Mobile Optimization --- */
+      .mobile-header {
+        display: none;
+      }
+      #sidebar-overlay {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .app-shell {
+          flex-direction: column;
+        }
+        .mobile-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 14px 20px;
+          background: var(--paper);
+          border-bottom: 1px solid var(--border);
+          z-index: 40;
+          position: sticky;
+          top: 0;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: 280px;
+          height: 100vh;
+          z-index: 100;
+          transition: left 0.3s ease;
+          box-shadow: var(--shadow);
+        }
+        .sidebar.open {
+          left: 0;
+        }
+        #sidebar-overlay.open {
+          display: block;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 90;
+          backdrop-filter: blur(2px);
+        }
+        .composer-wrap {
+          padding: 24px 16px 60px;
+          height: auto;
+        }
+        .composer-page {
+          padding: 24px 20px;
+          border-radius: 14px;
+        }
+        .auth-card {
+          padding: 28px 24px;
+          margin: 16px;
+        }
+        .radar-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        #generate-radar-btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
-    <!-- Authentication Screen -->
+    <!-- Authentication Screen (Login Only) -->
     <div id="auth-overlay">
       <div class="auth-card">
-        <h2>Welcome to Eunoia</h2>
+        <h2>Welcome Back to Eunoia!</h2>
         <input
           type="email"
           id="email"
@@ -540,14 +610,48 @@
         >
           Log In
         </button>
-        <button onclick="signUp()" class="btn btn-ghost btn-block">
-          Sign Up
-        </button>
+        <a
+          href="/signup"
+          class="btn btn-ghost btn-block"
+          style="
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            box-sizing: border-box;
+          "
+          >Create an Account</a
+        >
       </div>
     </div>
 
     <!-- Main Application -->
     <div class="app-shell hidden" id="app-shell">
+      <!-- Mobile Header -->
+      <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+      <div class="mobile-header">
+        <button
+          class="icon-btn"
+          onclick="toggleSidebar()"
+          aria-label="Open menu"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <h1 class="wordmark" style="font-size: 1.4rem; margin: 0">
+          Eunoia<span class="dot">.</span>
+        </h1>
+        <div style="width: 36px"></div>
+      </div>
+
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -707,7 +811,6 @@
           </p>
 
           <div id="patterns-container">
-            <!-- Pattern cards populated here -->
             <p
               style="color: var(--ink-faint); text-align: center; padding: 40px"
             >
@@ -722,14 +825,13 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
         getAuth,
-        createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
         onAuthStateChanged,
         signOut,
         getIdToken,
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-      // REPLACE WITH YOUR FIREBASE CONFIG
+      // YOUR SECURE FIREBASE CONFIG
       const firebaseConfig = {
         apiKey: "AIzaSyCBTN03SfpMDKLADYR-W2hncf2fZScBE4A",
         authDomain: "gemini-journal-14b2a.firebaseapp.com",
@@ -800,6 +902,19 @@
       });
       initTheme();
 
+      // Mobile Sidebar Logic
+      window.toggleSidebar = () => {
+        document.querySelector(".sidebar").classList.toggle("open");
+        document.getElementById("sidebar-overlay").classList.toggle("open");
+      };
+
+      function closeSidebarOnMobile() {
+        if (window.innerWidth <= 768) {
+          document.querySelector(".sidebar").classList.remove("open");
+          document.getElementById("sidebar-overlay").classList.remove("open");
+        }
+      }
+
       // UI Initialization
       function renderMoodFilters() {
         const sidebarWrap = document.getElementById("sidebar-moods");
@@ -839,14 +954,6 @@
       });
 
       // Authentication
-      window.signUp = () => {
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
-        createUserWithEmailAndPassword(auth, email, pass).catch((e) =>
-          alert(e.message),
-        );
-      };
-
       window.logIn = () => {
         const email = document.getElementById("email").value;
         const pass = document.getElementById("password").value;
@@ -884,6 +991,7 @@
         selectedComposerMood = null;
         renderMoodFilters();
         updateAmbientInsight();
+        closeSidebarOnMobile();
       };
 
       window.viewEntry = (item) => {
@@ -902,6 +1010,7 @@
         } else {
           moodElement.classList.add("hidden");
         }
+        closeSidebarOnMobile();
       };
 
       window.showRadar = () => {
@@ -909,6 +1018,7 @@
         document.getElementById("reader-view").classList.add("hidden");
         document.getElementById("radar-view").classList.remove("hidden");
         renderPatterns();
+        closeSidebarOnMobile();
       };
 
       // Data Fetching & Rendering
@@ -949,8 +1059,7 @@
               <span class="entry-item-date">${item.date}</span>
               <span class="entry-item-title">${item.prompt}</span>
               ${moodHtml}
-            </button>
-          `;
+            </button>`;
             li.querySelector("button").onclick = () => viewEntry(item);
             historyBox.appendChild(li);
           });
@@ -978,7 +1087,6 @@
         const container = document.getElementById("ambient-insight-container");
         const text = document.getElementById("ambient-insight-text");
         if (allPatterns.length > 0) {
-          // Randomly pick one pattern for the ambient banner
           const randomPattern =
             allPatterns[Math.floor(Math.random() * allPatterns.length)];
           text.innerText = randomPattern.description;
@@ -1000,11 +1108,9 @@
             headers: { Authorization: "Bearer " + userToken },
           });
           const data = await response.json();
-
           if (data.error) {
             alert(data.error);
           } else if (data.patterns) {
-            // Prepend new patterns
             allPatterns = [...data.patterns, ...allPatterns];
             renderPatterns();
           }
@@ -1022,7 +1128,6 @@
             '<p style="color: var(--ink-faint); text-align: center; padding: 40px;">No patterns analyzed yet. Write a few entries and click Analyze!</p>';
           return;
         }
-
         container.innerHTML = allPatterns
           .map((p) => {
             const datesString =
@@ -1039,8 +1144,7 @@
               <span>${datesString}</span>
               <button class="delete-pattern-btn" onclick="deletePattern('${p.id}')">Dismiss Insight</button>
             </div>
-          </div>
-        `;
+          </div>`;
           })
           .join("");
       }
